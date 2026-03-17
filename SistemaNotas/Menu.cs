@@ -68,7 +68,7 @@ class Program
             Console.Write("ID a modificar: ");
             if (int.TryParse(Console.ReadLine(), out int id))
             {
-                var est = estudiantesDB.Read((int)id);
+                var est = estudiantesDB.Read(id);
                 if (est != null)
                 {
                     Console.Write($"Nuevo Nombre ({est.Nombres}): ");
@@ -84,7 +84,7 @@ class Program
             Console.Write("ID a eliminar: ");
             if (int.TryParse(Console.ReadLine(), out int id))
             {
-                estudiantesDB.Delete((int)id);
+                estudiantesDB.Delete(id);
                 Console.WriteLine("Eliminado.");
             }
             Console.ReadKey();
@@ -120,7 +120,7 @@ class Program
             Console.Write("ID a modificar: ");
             if (int.TryParse(Console.ReadLine(), out int id))
             {
-                var mat = materiasDB.Read((int)id);
+                var mat = materiasDB.Read(id);
                 if (mat != null)
                 {
                     Console.Write($"Nuevo Nombre ({mat.Nombre}): ");
@@ -136,7 +136,7 @@ class Program
             Console.Write("ID a eliminar: ");
             if (int.TryParse(Console.ReadLine(), out int id))
             {
-                materiasDB.Delete((int)id);
+                materiasDB.Delete(id);
                 Console.WriteLine("Eliminado.");
             }
             Console.ReadKey();
@@ -193,7 +193,7 @@ class Program
             Console.Write("ID de Nota a modificar: ");
             if (int.TryParse(Console.ReadLine(), out int id))
             {
-                var nota = notasDB.Read((int)id);
+                var nota = notasDB.Read(id);
                 if (nota != null)
                 {
                     Console.Write($"Nueva nota ({nota.ValorNota}): ");
@@ -210,7 +210,7 @@ class Program
             Console.Write("ID a eliminar: ");
             if (int.TryParse(Console.ReadLine(), out int id))
             {
-                notasDB.Delete((int)id);
+                notasDB.Delete(id);
                 Console.WriteLine("Eliminado.");
             }
             Console.ReadKey();

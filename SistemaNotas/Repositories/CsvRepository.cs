@@ -49,12 +49,16 @@ public class CsvRepository<T> where T : IIdentifiable
     public void Create(T entity)
     {
         var records = GetAll();
-        if (entity.Id == Guid.Empty) entity.Id = Guid.NewGuid();
+        // Asigna un nuevo Id incremental si es 0
+        if (entity.Id == 0)
+        {
+            entity.Id = records.Count > 0 ? records.Max(e => e.Id) + 1 : 1;
+        }
         records.Add(entity);
         SaveAll(records);
     }
 
-    public T? Read(Guid id) => GetAll().FirstOrDefault(e => e.Id == id);
+    public T? Read(int id) => GetAll().FirstOrDefault(e => e.Id == id);
 
     public void Update(T entity)
     {
@@ -67,7 +71,7 @@ public class CsvRepository<T> where T : IIdentifiable
         }
     }
 
-    public void Delete(Guid id)
+    public void Delete(int id)
     {
         var records = GetAll();
         records.RemoveAll(e => e.Id == id);
