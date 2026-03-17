@@ -2,18 +2,15 @@ using System;
 using SistemaNotas.Models;
 using SistemaNotas.Repositories;
 
-namespace SistemaNotas;
-
-class Program
-// Clase principal del sistema educativo. Gestiona el menú principal y las operaciones CRUD para estudiantes, materias y notas.
+namespace SistemaNotas
 {
-    // Repositorio para operaciones sobre estudiantes.
+    class Program
+    {
+// Clase principal del sistema educativo. Gestiona el menú principal y las operaciones CRUD para estudiantes, materias y notas.
     static CsvRepository<Estudiante> estudiantesDB = new("Estudiantes");
-    // Repositorio para operaciones sobre materias.
     static CsvRepository<Materia> materiasDB = new("Materias");
-    // Repositorio para operaciones sobre notas.
     static CsvRepository<Nota> notasDB = new("Notas");
-    // Método principal. Muestra el menú principal y redirige a los submenús según la opción elegida.
+
     static void Main()
     {
         while (true)
@@ -35,7 +32,6 @@ class Program
         }
     }
 
-    // Muestra el menú y gestiona las operaciones CRUD para estudiantes.
     static void MenuEstudiante()
     {
         Console.Clear();
@@ -43,15 +39,19 @@ class Program
         Console.WriteLine("1. Crear\n2. Listar\n3. Modificar\n4. Eliminar");
         Console.Write("Opcion: ");
         var opt = Console.ReadLine();
-        
         if (opt == "1")
         {
             var est = new Estudiante();
-            Console.Write("Nombres: "); est.Nombres = Console.ReadLine() ?? "";
-            Console.Write("Apellidos: "); est.Apellidos = Console.ReadLine() ?? "";
-            Console.Write("Matricula: "); est.Matricula = Console.ReadLine() ?? "";
-            Console.Write("Calle (Direccion): "); est.DireccionResidencia.Calle = Console.ReadLine() ?? "";
-            Console.Write("Ciudad (Direccion): "); est.DireccionResidencia.Ciudad = Console.ReadLine() ?? "";
+            Console.Write("Nombres: ");
+            est.Nombres = LeerTextoNoNumerico();
+            Console.Write("Apellidos: ");
+            est.Apellidos = LeerTextoNoNumerico();
+            Console.Write("Matricula: ");
+            est.Matricula = LeerTextoNoVacio();
+            Console.Write("Calle (Direccion): ");
+            est.DireccionResidencia.Calle = LeerTextoNoVacio();
+            Console.Write("Ciudad (Direccion): ");
+            est.DireccionResidencia.Ciudad = LeerTextoNoVacio();
             estudiantesDB.Create(est);
             Console.WriteLine("Guardado correctamente.");
             Console.ReadKey();
@@ -66,32 +66,43 @@ class Program
         else if (opt == "3")
         {
             Console.Write("ID a modificar: ");
-            if (int.TryParse(Console.ReadLine(), out int id))
+            var input = Console.ReadLine();
+            if (!int.TryParse(input, out int id))
             {
-                var est = estudiantesDB.Read(id);
-                if (est != null)
-                {
-                    Console.Write($"Nuevo Nombre ({est.Nombres}): ");
-                    var n = Console.ReadLine(); if (!string.IsNullOrEmpty(n)) est.Nombres = n;
-                    estudiantesDB.Update(est);
-                    Console.WriteLine("Actualizado.");
-                }
+                Console.WriteLine("Error: Debe ingresar un número entero válido.");
+                Console.ReadKey();
+                return;
+            }
+            var est = estudiantesDB.Read(id);
+            if (est != null)
+            {
+                Console.Write($"Nuevo Nombre ({est.Nombres}): ");
+                var n = Console.ReadLine(); if (!string.IsNullOrEmpty(n)) est.Nombres = n;
+                estudiantesDB.Update(est);
+                Console.WriteLine("Actualizado.");
+            }
+            else
+            {
+                Console.WriteLine("No se encontró un estudiante con ese ID.");
             }
             Console.ReadKey();
         }
         else if (opt == "4")
         {
             Console.Write("ID a eliminar: ");
-            if (int.TryParse(Console.ReadLine(), out int id))
+            var input = Console.ReadLine();
+            if (!int.TryParse(input, out int id))
             {
-                estudiantesDB.Delete(id);
-                Console.WriteLine("Eliminado.");
+                Console.WriteLine("Error: Debe ingresar un número entero válido.");
+                Console.ReadKey();
+                return;
             }
+            estudiantesDB.Delete(id);
+            Console.WriteLine("Eliminado.");
             Console.ReadKey();
         }
     }
 
-    // Muestra el menú y gestiona las operaciones CRUD para materias.
     static void MenuMateria()
     {
         Console.Clear();
@@ -99,12 +110,11 @@ class Program
         Console.WriteLine("1. Crear\n2. Listar\n3. Modificar\n4. Eliminar");
         Console.Write("Opcion: ");
         var opt = Console.ReadLine();
-        
         if (opt == "1")
         {
             var mat = new Materia();
-            Console.Write("Nombre Materia: "); mat.Nombre = Console.ReadLine() ?? "";
-            Console.Write("Creditos: "); mat.Creditos = int.TryParse(Console.ReadLine(), out int c) ? c : 0;
+            Console.Write("Nombre Materia: "); mat.Nombre = LeerTextoNoNumerico();
+            Console.Write("Creditos: "); mat.Creditos = LeerEnteroPositivo();
             materiasDB.Create(mat);
             Console.WriteLine("Guardado correctamente.");
             Console.ReadKey();
@@ -118,32 +128,43 @@ class Program
         else if (opt == "3")
         {
             Console.Write("ID a modificar: ");
-            if (int.TryParse(Console.ReadLine(), out int id))
+            var input = Console.ReadLine();
+            if (!int.TryParse(input, out int id))
             {
-                var mat = materiasDB.Read(id);
-                if (mat != null)
-                {
-                    Console.Write($"Nuevo Nombre ({mat.Nombre}): ");
-                    var n = Console.ReadLine(); if (!string.IsNullOrEmpty(n)) mat.Nombre = n;
-                    materiasDB.Update(mat);
-                    Console.WriteLine("Actualizado.");
-                }
+                Console.WriteLine("Error: Debe ingresar un número entero válido.");
+                Console.ReadKey();
+                return;
+            }
+            var mat = materiasDB.Read(id);
+            if (mat != null)
+            {
+                Console.Write($"Nuevo Nombre ({mat.Nombre}): ");
+                var n = Console.ReadLine(); if (!string.IsNullOrEmpty(n)) mat.Nombre = n;
+                materiasDB.Update(mat);
+                Console.WriteLine("Actualizado.");
+            }
+            else
+            {
+                Console.WriteLine("No se encontró una materia con ese ID.");
             }
             Console.ReadKey();
         }
         else if (opt == "4")
         {
             Console.Write("ID a eliminar: ");
-            if (int.TryParse(Console.ReadLine(), out int id))
+            var input = Console.ReadLine();
+            if (!int.TryParse(input, out int id))
             {
-                materiasDB.Delete(id);
-                Console.WriteLine("Eliminado.");
+                Console.WriteLine("Error: Debe ingresar un número entero válido.");
+                Console.ReadKey();
+                return;
             }
+            materiasDB.Delete(id);
+            Console.WriteLine("Eliminado.");
             Console.ReadKey();
         }
     }
 
-    // Muestra el menú y gestiona las operaciones CRUD para notas (asignaciones de estudiantes a materias y sus calificaciones).
     static void MenuNota()
     {
         Console.Clear();
@@ -151,20 +172,31 @@ class Program
         Console.WriteLine("1. Crear (Asociar Estudiante a Materia)\n2. Listar\n3. Modificar\n4. Eliminar");
         Console.Write("Opcion: ");
         var opt = Console.ReadLine();
-        
         if (opt == "1")
         {
             var nota = new Nota();
             Console.WriteLine("Estudiantes Disponibles:");
             foreach(var e in estudiantesDB.GetAll()) Console.WriteLine($"{e.Id} -> {e.Nombres} {e.Apellidos}");
             Console.Write("Ingrese ID Estudiante: ");
-            if (!int.TryParse(Console.ReadLine(), out int eid)) return;
+            var inputEst = Console.ReadLine();
+            if (!int.TryParse(inputEst, out int eid))
+            {
+                Console.WriteLine("Error: Debe ingresar un número entero válido para el ID de estudiante.");
+                Console.ReadKey();
+                return;
+            }
             nota.EstudianteId = eid;
 
             Console.WriteLine("\nMaterias Disponibles:");
             foreach(var m in materiasDB.GetAll()) Console.WriteLine($"{m.Id} -> {m.Nombre}");
             Console.Write("Ingrese ID Materia: ");
-            if (!int.TryParse(Console.ReadLine(), out int mid)) return;
+            var inputMat = Console.ReadLine();
+            if (!int.TryParse(inputMat, out int mid))
+            {
+                Console.WriteLine("Error: Debe ingresar un número entero válido para el ID de materia.");
+                Console.ReadKey();
+                return;
+            }
             nota.MateriaId = mid;
 
             Console.Write("Valor de la Nota (ej. 4.5): ");
@@ -191,29 +223,90 @@ class Program
         else if (opt == "3")
         {
             Console.Write("ID de Nota a modificar: ");
-            if (int.TryParse(Console.ReadLine(), out int id))
+            var input = Console.ReadLine();
+            if (!int.TryParse(input, out int id))
             {
-                var nota = notasDB.Read(id);
-                if (nota != null)
-                {
-                    Console.Write($"Nueva nota ({nota.ValorNota}): ");
-                    var text = Console.ReadLine()?.Replace(".", ",");
-                    nota.ValorNota = decimal.TryParse(text, out decimal val) ? val : nota.ValorNota;
-                    notasDB.Update(nota);
-                    Console.WriteLine("Actualizado.");
-                }
+                Console.WriteLine("Error: Debe ingresar un número entero válido.");
+                Console.ReadKey();
+                return;
+            }
+            var nota = notasDB.Read(id);
+            if (nota != null)
+            {
+                Console.Write($"Nueva nota ({nota.ValorNota}): ");
+                var text = Console.ReadLine()?.Replace(".", ",");
+                nota.ValorNota = decimal.TryParse(text, out decimal val) ? val : nota.ValorNota;
+                notasDB.Update(nota);
+                Console.WriteLine("Actualizado.");
+            }
+            else
+            {
+                Console.WriteLine("No se encontró una nota con ese ID.");
             }
             Console.ReadKey();
         }
         else if (opt == "4")
         {
             Console.Write("ID a eliminar: ");
-            if (int.TryParse(Console.ReadLine(), out int id))
+            var input = Console.ReadLine();
+            if (!int.TryParse(input, out int id))
             {
-                notasDB.Delete(id);
-                Console.WriteLine("Eliminado.");
+                Console.WriteLine("Error: Debe ingresar un número entero válido.");
+                Console.ReadKey();
+                return;
             }
+            notasDB.Delete(id);
+            Console.WriteLine("Eliminado.");
             Console.ReadKey();
         }
+    }
+
+    // Métodos de validación de entrada (solo una vez, al final de la clase)
+    static string LeerTextoNoNumerico()
+    {
+        while (true)
+        {
+            var input = Console.ReadLine() ?? "";
+            if (string.IsNullOrWhiteSpace(input))
+            {
+                Console.Write("El valor no puede estar vacío. Intente de nuevo: ");
+                continue;
+            }
+            if (int.TryParse(input, out _))
+            {
+                Console.Write("No puede ser solo números. Intente de nuevo: ");
+                continue;
+            }
+            return input;
+        }
+    }
+
+    static string LeerTextoNoVacio()
+    {
+        while (true)
+        {
+            var input = Console.ReadLine() ?? "";
+            if (string.IsNullOrWhiteSpace(input))
+            {
+                Console.Write("El valor no puede estar vacío. Intente de nuevo: ");
+                continue;
+            }
+            return input;
+        }
+    }
+
+    static int LeerEnteroPositivo()
+    {
+        while (true)
+        {
+            var input = Console.ReadLine();
+            if (!int.TryParse(input, out int valor) || valor <= 0)
+            {
+                Console.Write("Debe ingresar un número entero positivo. Intente de nuevo: ");
+                continue;
+            }
+            return valor;
+        }
+    }
     }
 }
